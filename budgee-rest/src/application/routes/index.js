@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import transactions from './transactions'
 import users from './users'
 

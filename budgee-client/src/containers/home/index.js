@@ -1,49 +1,65 @@
 import React from 'react'
-import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {Button, Jumbotron} from 'react-bootstrap'
-import {decrement, decrementAsync, increment, incrementAsync} from '../../modules/counter'
-import {LinkContainer} from "react-router-bootstrap";
+import {Button, ButtonToolbar, Form as BsForm, FormControl, FormGroup, Panel} from 'react-bootstrap'
+import {Control, Form} from 'react-redux-form';
+import * as routerActions from "react-router-redux";
+import {bindActionCreators} from 'redux'
 
-const Home = props => (
-    <Jumbotron>
-        <div class="container">
-            <h1>Home</h1>
-            <p>Count: {props.count}</p>
+class Home extends React.Component {
+  handleRegister(login) {
+    console.log(`Registering ${login.toString()}`)
+  }
 
-            <p>
-                <Button onClick={props.increment} disabled={props.isIncrementing}>Increment</Button>
-                <Button onClick={props.incrementAsync} disabled={props.isIncrementing}>Increment Async</Button>
-            </p>
+  render() {
+    return (
+      <div className="container">
+        <h1>Welcome to Budgee</h1>
 
-            <p>
-                <Button onClick={props.decrement} disabled={props.isDecrementing}>Decrement</Button>
-                <Button onClick={props.decrementAsync} disabled={props.isDecrementing}>Decrement Async</Button>
-            </p>
 
-            <p>
-                <LinkContainer to="/about">
-                    <Button>Go to about page via redux</Button>
-                </LinkContainer>
-            </p>
-        </div>
-    </Jumbotron>
-);
+        <BsForm>
+          <Form
+            model="login"
+            onSubmit={(login) => this.props.handleSubmit(login)}
+          >
+            <FormGroup
+              bsClass="login"
+              horizontal="true"
+              controlId="login.username"
+              validationState={null}>
+              <Control model="login.username" placeholder="Username"
+                       component={FormControl}/>
 
-const mapStateToProps = state => ({
-    count: state.counter.count,
-    isIncrementing: state.counter.isIncrementing,
-    isDecrementing: state.counter.isDecrementing
-});
+              <Panel.Footer>
+                <ButtonToolbar>
+                  <Button type="submit">
+                    Login
+                  </Button>
+                  <Button onClick={(login) => this.handleRegister(login)}>
+                    Register
+                  </Button>
+                </ButtonToolbar>
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-    increment,
-    incrementAsync,
-    decrement,
-    decrementAsync
-}, dispatch);
+              </Panel.Footer>
+
+            </FormGroup>
+
+          </Form>
+        </BsForm>
+
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => bindActionCreators({handleSubmit}, dispatch);
+
+function handleSubmit(login) {
+  return routerActions.push(`/transactions/${login.username}`);
+}
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Home)

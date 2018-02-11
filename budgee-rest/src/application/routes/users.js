@@ -14,9 +14,10 @@ function addUser(req, res, next) {
     .then(success => {
       if (success) {
         return transactions.addInitial(userId);
-    } else {
+      } else {
         res.sendStatus(409);
-    }})
+      }
+    })
     .then(() => res.sendStatus(200))
     .catch(e => next(e));
 }
