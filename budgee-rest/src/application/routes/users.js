@@ -6,7 +6,22 @@ const log = new Log();
 
 const router = Router();
 
-router.post('/:user_id', addUser);
+router.route('/:user_id')
+  .get(getUser)
+  .post(addUser);
+
+function getUser(req, res, next) {
+  const userId = req.params.user_id;
+  users.get(userId)
+    .then(r => {
+      if (r.length > 0) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch(e => next(e));
+}
 
 function addUser(req, res, next) {
   const userId = req.params.user_id;

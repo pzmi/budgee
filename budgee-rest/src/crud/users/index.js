@@ -13,4 +13,10 @@ export default class Users {
       .catch(e => Promise.reject(e));
   }
 
+  get(userId) {
+    return this.persistence.get(userId)
+      .then(r => r.rows)
+      .catch(e => Promise.reject(e));
+  }
+
 }
