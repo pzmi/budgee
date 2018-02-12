@@ -20,6 +20,9 @@ export const UPDATE_TAGS = 'UPDATE_TAGS';
 export const UPDATE_TAGS_SUCCESS = 'UPDATE_TAGS_SUCCESS';
 export const UPDATE_TAGS_FAILURE = 'UPDATE_TAGS_FAILURE';
 
+export const TAGS_EDITABLE = "TAGS_EDITABLE";
+export const TAGS_TYPE = "TAGS_TYPE";
+
 const base = "/api/transactions/";
 
 export const addTransaction = (user, transaction) => ({
@@ -58,10 +61,27 @@ export const getTransactionsFromTranscationTime = (user, transactionTime) => ({
 
 export const updateTags = (user, transactionTime, tags) => ({
   [RSAA]: {
-    types: [UPDATE_TAGS, UPDATE_TAGS_SUCCESS, UPDATE_TAGS_FAILURE],
+    types: [{type: UPDATE_TAGS, meta: {transactionTime}}, {
+      type: UPDATE_TAGS_SUCCESS,
+      meta: {transactionTime, tags: tags.tags}
+    }, UPDATE_TAGS_FAILURE],
     endpoint: `${base}${user}/${transactionTime}`,
     method: 'PATCH',
     body: JSON.stringify(tags),
     headers: {'Content-Type': 'application/json'},
   }
 });
+
+export const tagsEditable = transactionTime => {
+  return {
+    type: TAGS_EDITABLE,
+    transactionTime
+  }
+};
+
+export const tagsType = editedTags => {
+  return {
+    type: TAGS_TYPE,
+    editedTags
+  }
+};
