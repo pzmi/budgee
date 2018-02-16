@@ -27,7 +27,10 @@ const base = "/api/transactions/";
 
 export const addTransaction = (user, transaction) => ({
   [RSAA]: {
-    types: [ADD_TRANSACTION, ADD_TRANSACTION_SUCCESS, ADD_TRANSACTION_FAILURE],
+    types: [ADD_TRANSACTION, {
+      type: ADD_TRANSACTION_SUCCESS,
+      meta: {transaction}
+    }, ADD_TRANSACTION_FAILURE],
     endpoint: `${base}${user}`,
     method: 'POST',
     body: JSON.stringify(transaction),

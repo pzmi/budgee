@@ -4,7 +4,7 @@ import cassandra from 'cassandra-driver'
 const log = new Log();
 
 const query = 'SELECT transaction_time, details, description, value, balance, tags  FROM transactions WHERE user_id=? AND transaction_time<? LIMIT ?';
-const add = 'INSERT INTO transactions (user_id, transaction_time, details, description, value) values (?, ?, ?, ?, ?)';
+const add = 'INSERT INTO transactions (user_id, transaction_time, details, description, value, tags) values (?, ?, ?, ?, ?, ?)';
 const updateTags = 'UPDATE transactions SET tags=? WHERE user_id=? AND transaction_time=? IF EXISTS';
 const updateBalance = 'UPDATE transactions SET balance=? WHERE user_id=? AND transaction_time=? IF EXISTS';
 const addInitial = 'INSERT INTO transactions (user_id, transaction_time, balance) values (?, minTimeuuid(\'1970-01-01 00:05+0000\'), 0)';
@@ -26,9 +26,17 @@ export default class Cassandra {
   }
 
   add(userId, transaction) {
+    const tags = transaction.tags || [];
     const timeuuid = cassandra.types.TimeUuid.fromDate(transaction.transaction_time);
-    const parameters = [userId, timeuuid, transaction.details, transaction.description, transaction.value];
+    const parameters = [userId, timeuuid, transaction.details, transaction.description, transaction.value, tags];
     return this.client.execute(add, parameters, {prepare: true})
+      .then(r => {
+        r.rows = [{
+          ...transaction, transaction_time: timeuuid
+        }];
+        return r;
+      })
+      .catch(e => Promise.reject(e));
   }
 
   addInitial(userId) {

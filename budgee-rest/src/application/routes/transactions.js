@@ -15,7 +15,7 @@ router.patch('/:user_id/:transaction_time', updateTags);
 
 function addTransaction(req, res, next) {
   transactions.add(req.params.user_id, req.body)
-    .then(() => res.sendStatus(200))
+    .then(r => respond(r, req, res))
     .catch(e => {
       log.info(e);
 
@@ -31,7 +31,7 @@ function queryTransactions(req, res, next) {
   let promise;
   const userId = req.params.user_id;
   if (req.query.from_date != null) {
-    promise = transactions.from(userId, new Date(req.query.from_date))
+    promise = transactions.since(userId, new Date(req.query.from_date))
   } else if (req.query.from_transaction_time != null) {
     promise = transactions.more(userId, req.query.from_transaction_time)
   } else {

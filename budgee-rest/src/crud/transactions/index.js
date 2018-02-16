@@ -38,7 +38,7 @@ export default class Transactions {
   add(userId, transaction) {
     const validation = _validate(transaction);
     if (validation.result) {
-      return this.persistence.add(userId, transaction);
+      return this._prepareResponse(this.persistence.add(userId, transaction), userId);
     } else {
       return Promise.reject(
         {

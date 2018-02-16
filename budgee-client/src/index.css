@@ -20,3 +20,11 @@ button:disabled {
     background: #fff;
     border-radius: 4px;
 }
+
+.input-form {
+    white-space:nowrap;
+}
+
+.balance {
+    padding-top: 10px;
+}
