@@ -14,6 +14,7 @@ router
 router.patch('/:user_id/:transaction_time', updateTags);
 
 function addTransaction(req, res, next) {
+  log.info(req.body);
   transactions.add(req.params.user_id, req.body)
     .then(r => respond(r, req, res))
     .catch(e => {

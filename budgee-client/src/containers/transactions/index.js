@@ -15,6 +15,10 @@ function lastTransactionTime(transactions) {
 }
 
 function tagsToArray(tags) {
+  if (tags === undefined) {
+    tags = "";
+  }
+
   return tags.split(",").map(t => t.trim());
 }
 
@@ -31,9 +35,27 @@ class UserTransactions extends React.Component {
       {
         ...transaction,
         tags: tagsToArray(transaction.tags),
-        transaction_time: new Date(transaction.transaction_time),
+        transaction_time: this.combineDateTime(transaction.transaction_date, transaction.transaction_time),
         value: transaction.value * 100
       });
+  }
+
+  combineDateTime(date, time) {
+    let hours = Number(time.match(/^(\d+)/)[1]);
+    let minutes = Number(time.match(/:(\d+)/)[1]);
+    let AMPM = time.match(/\s(.*)$/);
+    if (AMPM != null) {
+      if (AMPM[1] == "pm" && hours < 12) hours = hours + 12;
+      if (AMPM[1] == "am" && hours == 12) hours = hours - 12;
+    }
+    let sHours = hours.toString();
+    let sMinutes = minutes.toString();
+    if(hours<10) sHours = "0" + sHours;
+    if(minutes<10) sMinutes = "0" + sMinutes;
+    time = sHours + ":" + sMinutes + ":00";
+    let d = new Date(date);
+    let n = d.toISOString().substring(0,10);
+    return new Date(n + "T" + time);
   }
 
   updateTags(transaction) {
@@ -109,6 +131,7 @@ class UserTransactions extends React.Component {
                     validationState={null}>
                     <Control model="showFrom.date" placeholder="From"
                              defaultValue={UserTransactions.today()}
+                             className = "transactions-from"
                              component={FormControl} type="date"/>
                   </FormGroup>
                   <Button type="submit">
@@ -134,12 +157,21 @@ class UserTransactions extends React.Component {
             <Row>
               <Form className="form-inline" model="transactionForm" onSubmit={(t) => this.handleAdd(t)}>
                 <Col md={2}>
+                  <FormGroup
+                    horizontal="true"
+                    controlId="transaction.transaction_date"
+                    validationState={null}>
+                    <Control model="transactionForm.transaction_date" placeholder="Transaction date"
+                             component={FormControl} type="date"/>
+                  </FormGroup>
+                </Col>
+                <Col md={2}>
                 <FormGroup
                   horizontal="true"
                   controlId="transaction.transaction_time"
                   validationState={null}>
                   <Control model="transactionForm.transaction_time" placeholder="Transaction time"
-                           component={FormControl} type="datetime-local"/>
+                           component={FormControl} type="time"/>
                 </FormGroup>
                 </Col>
                 <Col md={2}>

@@ -1,11 +1,12 @@
 import {createForms} from 'react-redux-form';
 
 const INITIAL_STATE = {
-  transaction_time: new Date(),
+  transaction_time: '',
+  transaction_date: '',
   details: '',
   description: '',
   value: '',
-  tags: []
+  tags: ''
 };
 
 export default createForms({

@@ -28,3 +28,7 @@ button:disabled {
 .balance {
     padding-top: 10px;
 }
+
+.transactions-from {
+    padding-bottom: 0;
+}
